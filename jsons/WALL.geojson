@@ -1,0 +1,25 @@
+{
+   "type": "FeatureCollection",
+   "features": [
+  {
+    "type": "Feature",
+    "geometry": {
+       "type": "Point",
+       "coordinates":  [ 	-121.7170,	47.8674 ]
+    },
+    "properties": {
+    "Facility":"Wallace River Hatchery"
+    }
+  },
+  {
+    "type": "Feature",
+    "geometry": {
+       "type": "Point",
+       "coordinates":  [ 	-121.6241,	47.8390 ]
+    },
+    "properties": {
+    "Facility":"Reiter Ponds"
+    }
+  }
+]
+}
