@@ -1,0 +1,27 @@
+.headers {
+  background-color: #92B4A7;
+ color: 'black';
+ font-family: 'Comic Sans MS'; cursive; sans-serif;
+ font-size: 1.6em;
+ padding: 20px;
+ text-align: center;
+}
+body {
+  font-family: "Tahoma"; sans-serif;
+  background-color: #F3F9D2;
+  color: #2F2F2F;
+  font-size:1.2em;
+  max-width: 65em;
+
+  margin:auto;
+
+
+}
+
+#map {height: 75em;}
+.attribution {
+  color: #2f2f2f;
+  font-style: italic;
+  font-size: .5em;
+  position: relative;
+}
