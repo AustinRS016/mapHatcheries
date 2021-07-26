@@ -1,12 +1,13 @@
 
-// set the dimensions and margins of the graph
 
-// height = 400 - margin.top - margin.bottom;
+
 //read data
 d3.csv("https://raw.githubusercontent.com/AustinRS016/D3/main/output/WALLACE_R_HATCHERY.csv", function(data) {
-  // Get the different categories and count them
+  // set the dimensions and margins of the graph
   var margin = {top: 60, right: 30, bottom: 20, left:110},
       width = 460 - margin.left - margin.right;
+
+  // Get the different categories and count them
   var categories = data.columns
   var n = categories.length
   var  height = n * 27;

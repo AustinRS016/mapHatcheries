@@ -8,7 +8,7 @@
        "coordinates":  [ 	-121.7170,	47.8674 ]
     },
     "properties": {
-    "Facility":"Wallace River Hatchery"
+    "Facility":"WALLACE_R_HATCHERY"
     }
   },
   {
@@ -18,7 +18,7 @@
        "coordinates":  [ 	-121.6241,	47.8390 ]
     },
     "properties": {
-    "Facility":"Reiter Ponds"
+    "Facility":"REITER_PONDS"
     }
   }
 ]
