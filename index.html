@@ -6,36 +6,47 @@
 
 		<!-- insert Mapbox GL library links here -->
 			<script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+
 			<link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
 			<link rel="stylesheet" href="index.css" type="text/css"/>
 			<meta charset="utf-8">
 
 			<!-- Load d3.js -->
 			<script src="https://d3js.org/d3.v4.js"></script>
-
+			<script src="https://d3js.org/d3-array.v2.min.js"></script>
+			<!-- Contour plugin -->
+			<script src="https://d3js.org/d3-contour.v1.min.js"></script>
 			<!-- Create a div where the graph will take place -->
-
 	</head>
 
 	<body>
 
+			<div id="waterData"></div>
 		<!-- create div for the map here -->
 		<div id='map'>
 			</div>
 
 		<div id="my_dataviz" style= 'display:none;'></div>
-
-
-		<div class='chart-box'>
-			<div id='chart'>
-			</div>
-		</div>
+		<div id="lineChart" style='display:none'></div>
 
 
 
 
 
-<!-- <script src = 'graph.js'></script> -->
+
+		<div id="detail_show">
+	       <div id="graph"></div>
+	     </div>
+
+
+
+
+
+
+
+<!-- USGS Water Data Script -->
+<script src = 'waterData.js'></script>
+
 <script src = 'index.js'></script>
 
 
