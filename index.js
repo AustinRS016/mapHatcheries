@@ -69,23 +69,29 @@ function wrap(text, width) {
 /////// Histograms
 d3.csv("https://raw.githubusercontent.com/AustinRS016/capstoneDataRepo/main/densityPlotData/" + e.features[0].properties['Facility'] + ".csv", function(data) {
           // set the dimensions and margins of the graph
-          var margin = {top: 60, right: 30, bottom: 20, left:110},
-              width = 460 - margin.left - margin.right;
+          var margin = {top: 60, right: 20, bottom: 20, left:150},
+              width = 800 - margin.left - margin.right;
 
 
 
           // Get the different categories and count them
           var categories = data.columns
           var n = categories.length
-          var  height = n * 27;
-          for (i=0; i<n; i++){
-            var tst = (categories[i])
-            console.log(tst)
+          if (n > 3){
+            var height = n * 30
           }
+          else {
+            var  height = n * 20;
 
+          }
+          if (n > 3){
+            var yDom = .2
+          }
+          else{
+            var yDom = .05
+          }
+          console.log(n)
 
-          // var categories = data.columns
-          console.log(categories)
 
 
           // append the svg object to the body of the page
@@ -100,7 +106,7 @@ d3.csv("https://raw.githubusercontent.com/AustinRS016/capstoneDataRepo/main/dens
           // Add X axis
           var x = d3.scaleLinear()
             .domain([0, 366])
-            .range([ 0, 366]);
+            .range([ 0, width]);
           let xAxisGenerator = d3.axisBottom(x);
           let tickLabels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
           xAxisGenerator.tickValues([0,31,59,90,120,151,181,212,243,273,304,334]);
@@ -114,7 +120,7 @@ d3.csv("https://raw.githubusercontent.com/AustinRS016/capstoneDataRepo/main/dens
 
           // Create a Y scale for densities
           var y = d3.scaleLinear()
-            .domain([0, 0.2])
+            .domain([0, yDom])
             .range([ height, 0]);
 
           // Create the Y axis for names
@@ -352,33 +358,69 @@ document.getElementById('lineChart').style.display='block';
 ///Weather Forecast
 const hatchLat = e.features[0].geometry.coordinates[1]
 const hatchLon = e.features[0].geometry.coordinates[0]
-$.getJSON("https://api.openweathermap.org/data/2.5/onecall?lat="+ hatchLat +"&lon="+ hatchLon +"&exclude=hourly,minutely&appid=c6e7120c57d9cf83d3bdb078b1beb1f1",  // url
+$.getJSON("https://api.openweathermap.org/data/2.5/onecall?lat="+ hatchLat +"&lon="+ hatchLon +"&exclude=hourly,minutely&units=imperial&appid=c6e7120c57d9cf83d3bdb078b1beb1f1",  // url
                 function(data){
                 document.getElementById('weather').innerHTML = "";
-                document.getElementById('weather').style.display='block';
+                document.getElementById('weather').style.display='flex';
                 var categories = data.daily
-                var n = 5
-                for (i=0; i<n; i++){
+
+                var n = 6
+                for (i=1; i<n; i++){
+
                   var icon = categories[i].weather[0].icon
                   var max = categories[i].temp.max
                   var min = categories[i].temp.min
+                  var dt = categories[i].dt
+                  var d = new Date(dt * 1000)
+                  var weekDay = d.toLocaleString('en-US',{weekday:'short'})
+
                   if (categories[i].rain == undefined){
                     var precip = 0
-                  }
+                    }
                   else{
                     var precip = categories[i].rain
-                  }
+                    }
+
                   var node = document.createElement("div")
-                  node.className = "daily";
+                      node.className = "daily";
+
+                  var h = document.createElement("h3")
+                      h.className = "weatherHeader"
+                  var head = document.createTextNode(weekDay)
+                      node.appendChild(head)
+
                   var img = document.createElement("img")
-                  img.src = "http://openweathermap.org/img/wn/" +icon+ "@2x.png"
-                  var textnode = document.createTextNode("Hi: " + max + " Lo: " + min + " Precip: " + precip)
-                  node.appendChild(textnode);
-                  node.appendChild(img);
-                  console.log(node)
+                      img.src = "http://openweathermap.org/img/wn/" +icon+ "@2x.png"
+                      node.appendChild(img);
+
+                  var ul = document.createElement("ul")
+                      ul.className = "weatherStats";
+
+                  var lmax = document.createElement("LI")
+                  var maxNode = document.createTextNode("High: " + max)
+                      lmax.appendChild(maxNode)
+                      ul.appendChild(lmax)
+
+                  var lmin = document.createElement("LI")
+                  var minNode = document.createTextNode("Low: " + min)
+                      lmin.appendChild(minNode)
+                      ul.appendChild(lmin)
+
+                  var lprecip = document.createElement("LI")
+                  var pNode = document.createTextNode("Precip: " + precip)
+                      lprecip.appendChild(pNode)
+                      ul.appendChild(lprecip)
+
+                  node.appendChild(ul);
+
                   document.getElementById("weather").appendChild(node);
-                }
-                });
+              }
+            });
 ////////////////////////////////////////////////////////////////
+document.getElementById('facilityName').innerHTML = "";
+document.getElementById('facilityName').style.display='block';
+var text = document.createTextNode(e.features[0].properties['Facility Name'])
+document.getElementById('facilityName').appendChild(text)
+
 
   });

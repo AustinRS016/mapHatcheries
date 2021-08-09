@@ -1,23 +1,34 @@
-.headers {
-  background-color: #92B4A7;
- color: 'black';
- font-family: 'Comic Sans MS'; cursive; sans-serif;
- font-size: 1.6em;
- padding: 20px;
- text-align: center;
-}
+
 body {
-  font-family: "Tahoma"; sans-serif;
-  background-color: #F3F9D2;
-  color: #2F2F2F;
-  font-size:1.2em;
-  max-width: 65em;
-  margin:auto;
+  width: 100%;
+  height: 100%;
+
+  margin: auto;
 }
+html {
+  width: 100%;
+  height: 100%;
+}
+h1 {
+  font-family: serif;
+  font-size: 6em;
+  text-align: center;
+}
+#mapCont{
+  justify-content: center;
+  width: 90%;
+  height: 100%;
+  margin: auto;
 
-
+}
 #map {
-  height: 75em;
+  height: 90%;
+  width: 100%;
+}
+#facilityName{
+  text-align: center;
+  font-size: 5em;
+  font-family: sans-serif;
 }
 
 .attribution {
@@ -26,27 +37,49 @@ body {
   font-size: .5em;
   position: relative;
 }
-#charts{
+.charts{
   margin:auto;
-  max-width: 500px;
+  width: 1800px;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
 }
 #graph{
-  padding: 25px 25px 25px 25px;
-  max-width: inherit;
+
+
   margin: auto;
-}
-#weatherBox{
-  margin: auto;
+
 }
 #weather{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   margin: auto;
   max-width: inherit;
+}
+#lineChart{
+  padding: 50px 50px 50px 50px
 }
 .temp{
   max-width: 200px;
   overflow-wrap: break-word;
   margin: auto;
 }
-img {
-  margin:auto;
+.daily{
+  text-align: center;
+  width: 150px
+}
+.daily img{
+  display: block;
+  margin: 0 auto;
+  size: 1.5em;
+}
+.weatherStats{
+  list-style-type: none;
+  padding: 0px;
+  margin: auto;
 }
