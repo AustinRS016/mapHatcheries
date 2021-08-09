@@ -337,7 +337,8 @@ document.getElementById('lineChart').style.display='block';
   cacheDtTm = new Date().getTime();
   parm = '00060'
   hydrograph_url = "http://waterdata.usgs.gov/nwisweb/graph?agency_cd=USGS&site_no="  + e.features[0].properties.river_gauge + "&parm_cd=00060&period=7&cacheTime=" + cacheDtTm;
-  hydrograph = '<a><img src="'+hydrograph_url+'" id="riverChart"height="500" width="500" /></a>';
+                    // http://waterdata.usgs.gov/nwisweb/graph?agency_cd=USGS&site_no=01646500&parm_cd=00060&period=7&cacheTime=1628470410259
+  hydrograph = '<a><img src="'+hydrograph_url+'" id="riverChart" height="500" width="600"/></a>';
   console.log(e.features[0].properties.river_gauge)
   if (e.features[0].properties.river_gauge == ""){
     document.getElementById('graph').innerHTML = "";
@@ -358,15 +359,7 @@ $.getJSON("https://api.openweathermap.org/data/2.5/onecall?lat="+ hatchLat +"&lo
                 var categories = data.daily
                 var n = 5
                 for (i=0; i<n; i++){
-
-                  icon = categories[i].weather[0].icon
-                  var img = document.createElement("img");
-                  img.src = "http://openweathermap.org/img/wn/" +icon+ "@2x.png";
-                  var src = document.getElementById("weather");
-                  src.appendChild(img);
-
-
-
+                  var icon = categories[i].weather[0].icon
                   var max = categories[i].temp.max
                   var min = categories[i].temp.min
                   if (categories[i].rain == undefined){
@@ -375,15 +368,17 @@ $.getJSON("https://api.openweathermap.org/data/2.5/onecall?lat="+ hatchLat +"&lo
                   else{
                     var precip = categories[i].rain
                   }
-                  // var tboth = document.createTextNode("Hi: " + max + "Lo: "+ min)
-                  // src.appendChild(tboth)
-                  var p = document.createElement("p");
-                  p.classList.add('temp')
-                  p.textContent = "Hi: " + max + " Lo: " + min + " Precip: " + precip;
-                  src.appendChild(p)
+                  var node = document.createElement("div")
+                  node.className = "daily";
+                  var img = document.createElement("img")
+                  img.src = "http://openweathermap.org/img/wn/" +icon+ "@2x.png"
+                  var textnode = document.createTextNode("Hi: " + max + " Lo: " + min + " Precip: " + precip)
+                  node.appendChild(textnode);
+                  node.appendChild(img);
+                  console.log(node)
+                  document.getElementById("weather").appendChild(node);
                 }
-
-
                 });
 ////////////////////////////////////////////////////////////////
+
   });

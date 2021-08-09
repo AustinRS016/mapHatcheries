@@ -12,16 +12,41 @@ body {
   color: #2F2F2F;
   font-size:1.2em;
   max-width: 65em;
-
   margin:auto;
-
-
 }
 
-#map {height: 75em;}
+
+#map {
+  height: 75em;
+}
+
 .attribution {
   color: #2f2f2f;
   font-style: italic;
   font-size: .5em;
   position: relative;
+}
+#charts{
+  margin:auto;
+  max-width: 500px;
+}
+#graph{
+  padding: 25px 25px 25px 25px;
+  max-width: inherit;
+  margin: auto;
+}
+#weatherBox{
+  margin: auto;
+}
+#weather{
+  margin: auto;
+  max-width: inherit;
+}
+.temp{
+  max-width: 200px;
+  overflow-wrap: break-word;
+  margin: auto;
+}
+img {
+  margin:auto;
 }
