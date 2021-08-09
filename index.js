@@ -1,10 +1,10 @@
 ////////////////////////////////////////////////////////////////////
 
 ////  Map
-mapboxgl.accessToken = 'pk.eyJ1IjoiYXVzdGlucnMxNiIsImEiOiJja2hjcjAyYWwwMTIyMnVsNXc3ajUwMmk0In0.b8-Uodu2rXl9TvsX7vatSQ';
+mapboxgl.accessToken = 'pk.eyJ1IjoiYXVzdGlucnMxNiIsImEiOiJja2hjcTRidmgwOWdpMnNxc3NmaHE5OXg1In0.va6GbxRjrFnzt6QWT_bwfQ';
 var map = new mapboxgl.Map({
   container: 'map', // HTML container id
-  style: 'mapbox://styles/austinrs16/ckhk49v3x0znh19o35r2mozoa', // style URL
+  style: 'mapbox://styles/austinrs16/ckoqf7lh646z517msf4mttqe9', // style URL
   center: [-121.6, 48], // starting position as [lng, lat]
   zoom: 8, // starting zoom
 });
@@ -27,8 +27,7 @@ map.addSource('hatch',{
     });
 
 ///////////////////////////////////////////////////////////////////
-
-/////  Function to query graph for hatchery clicked
+/////  Function to query data visualizations
  map.on('click', 'hatch', function (e) {
    console.log(e.features[0].properties['Facility'])
 //////////////////////////////////////////////////////////////////
@@ -65,17 +64,29 @@ function wrap(text, width) {
         }
     });
 }
-////   Funcition for histograms
-        //read data
-d3.csv("https://raw.githubusercontent.com/AustinRS016/D3/main/output/" + e.features[0].properties['Facility'] + ".csv", function(data) {
+
+/////////////////////////////////////////////////////////////////
+/////// Histograms
+d3.csv("https://raw.githubusercontent.com/AustinRS016/capstoneDataRepo/main/densityPlotData/" + e.features[0].properties['Facility'] + ".csv", function(data) {
           // set the dimensions and margins of the graph
           var margin = {top: 60, right: 30, bottom: 20, left:110},
               width = 460 - margin.left - margin.right;
+
+
 
           // Get the different categories and count them
           var categories = data.columns
           var n = categories.length
           var  height = n * 27;
+          for (i=0; i<n; i++){
+            var tst = (categories[i])
+            console.log(tst)
+          }
+
+
+          // var categories = data.columns
+          console.log(categories)
+
 
           // append the svg object to the body of the page
           var svg = d3.select("#my_dataviz")
@@ -114,6 +125,7 @@ d3.csv("https://raw.githubusercontent.com/AustinRS016/D3/main/output/" + e.featu
           svg.append("g")
             .call(d3.axisLeft(yName));
 
+
           // Compute kernel density estimation for each column:
           var kde = kernelDensityEstimator(kernelEpanechnikov(7), x.ticks(40)) // increase this 40 for more accurate density.
           var allDensity = []
@@ -121,10 +133,8 @@ d3.csv("https://raw.githubusercontent.com/AustinRS016/D3/main/output/" + e.featu
               key = categories[i]
               var data0 = data
                 .filter(function(d){  return d[key];})
-
               density = kde( data0
                 .map(function(d){  return d[key];}) )
-
               allDensity.push({key: key, density: density})
           }
 
@@ -144,7 +154,6 @@ d3.csv("https://raw.githubusercontent.com/AustinRS016/D3/main/output/" + e.featu
                   .y1(function(d) { return y(d[1]); })
                   .y0(y(0))
               )
-
         });
 
         // This is what I need to compute kernel density estimation
@@ -169,7 +178,7 @@ document.getElementById('my_dataviz').style.display='block';
 
 ////////////////////////////////////////////////////////////////
 ///// Line Chart
-d3.csv("https://raw.githubusercontent.com/AustinRS016/D3/main/lineChartData2/" + e.features[0].properties['Facility'] + ".csv", function(data) {
+d3.csv("https://raw.githubusercontent.com/AustinRS016/capstoneDataRepo/main/lineChartData/" + e.features[0].properties['Facility'] + ".csv", function(data) {
 
 
 // set the dimensions and margins of the graph
@@ -191,11 +200,8 @@ var svg = d3.select("#lineChart")
   var sumstat = d3.nest() // nest function allows to group the calculation per level of a factor
     .key(function(d) { return d.Run; })
     .entries(data);
-  var keys = (d3.groups(sumstat, d=> d.key)).map(function(arr){
-    return arr[0];
-  })
-
-  console.log(keys)
+  var keys = (d3.groups(sumstat, d=> d.key))
+    .map(function(arr){ return arr[0];})
 
 
   // Add X axis --> it is a date format
@@ -207,9 +213,14 @@ var svg = d3.select("#lineChart")
     .call(d3.axisBottom(x).ticks(5));
 
   // Add Y axis
-  var y = d3.scaleLinear()
+  var y = d3.scaleSqrt()
     .domain([0, d3.max(data, function(d) { return +d.Count; })])
     .range([ height, 0 ]);
+
+
+        console.log(d3.max(data, function(d) { return +d.Count; }))
+
+
   svg.append("g")
     .call(d3.axisLeft(y));
 
@@ -263,27 +274,27 @@ function hover(svg, path) {
       .attr("y", -8);
 
   function moved(event) {
-    event.preventDefault();
-    const pointer = d3.pointer(event, this);
-    const xm = x.invert(pointer[0]);
-    const ym = y.invert(pointer[1]);
-    const i = d3.bisectCenter(data.Year, xm);
-    const s = d3.least(data.series, d => Math.abs(d.values[i] - ym));
-    path.attr("stroke", d => d === s ? null : "#ddd").filter(d => d === s).raise();
-    dot.attr("transform", `translate(${x(data.dates[i])},${y(s.values[i])})`);
-    dot.select("text").text(s.Run);
-  }
+          event.preventDefault();
+          const pointer = d3.pointer(event, this);
+          const xm = x.invert(pointer[0]);
+          const ym = y.invert(pointer[1]);
+          const i = d3.bisectCenter(data.Year, xm);
+          const s = d3.least(data.series, d => Math.abs(d.values[i] - ym));
+          path.attr("stroke", d => d === s ? null : "#ddd").filter(d => d === s).raise();
+          dot.attr("transform", `translate(${x(data.dates[i])},${y(s.values[i])})`);
+          dot.select("text").text(s.Run);
+        }
 
   function entered() {
-    path.style("mix-blend-mode", null).attr("stroke", "#ddd");
-    dot.attr("display", null);
-  }
+          path.style("mix-blend-mode", null).attr("stroke", "#ddd");
+          dot.attr("display", null);
+        }
 
   function left() {
-    path.style("mix-blend-mode", "multiply").attr("stroke", null);
-    dot.attr("display", "none");
-  }
-}
+          path.style("mix-blend-mode", "multiply").attr("stroke", null);
+          dot.attr("display", "none");
+          }
+        }
 
 
 
@@ -301,16 +312,16 @@ function hover(svg, path) {
             .attr("height", size)
             .style("fill", function(d){ return color(d)})
         svg.selectAll("mylabels")
-             .data(keys)
-             .enter()
-             .append("text")
-               .attr("x", 510 + size*1.2)
-               .attr("y", function(d,i){ return 0 + i*(size+30) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
-               .style("fill", function(d){ return color(d)})
-               .text(function(d){ return d})
-               .attr("text-anchor", "left")
-               .style("alignment-baseline", "middle")
-               .call(wrap, 200)
+           .data(keys)
+           .enter()
+           .append("text")
+             .attr("x", 510 + size*1.2)
+             .attr("y", function(d,i){ return 0 + i*(size+30) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+             .style("fill", function(d){ return color(d)})
+             .text(function(d){ return d})
+             .attr("text-anchor", "left")
+             .style("alignment-baseline", "middle")
+             .call(wrap, 200)
 
 
 })
@@ -320,25 +331,59 @@ document.getElementById('lineChart').innerHTML = "";
 document.getElementById('lineChart').style.display='block';
 ////////////////////////////////////////////////////////////////
 
+
+////////////////////////////////////////////////////////////////
 ///River Chart
   cacheDtTm = new Date().getTime();
   parm = '00060'
   hydrograph_url = "http://waterdata.usgs.gov/nwisweb/graph?agency_cd=USGS&site_no="  + e.features[0].properties.river_gauge + "&parm_cd=00060&period=7&cacheTime=" + cacheDtTm;
-  hydrograph = '<a><img src="'+hydrograph_url+'" height="500" width="500" title="Hydrograph for site ' + e.features[0].properties.river_gauge + ' and parameter ' + parm
-          + '. Click to see a full size image." /></a>';
-  $('#graph').html(hydrograph);
+  hydrograph = '<a><img src="'+hydrograph_url+'" id="riverChart"height="500" width="500" /></a>';
+  console.log(e.features[0].properties.river_gauge)
+  if (e.features[0].properties.river_gauge == ""){
+    document.getElementById('graph').innerHTML = "";
+  }else{
+    $('#graph').html(hydrograph);
+  }
 ////////////////////////////////////////////////////////////////
 
+
+////////////////////////////////////////////////////////////////
 ///Weather Forecast
-  console.log(e.features[0].geometry.coordinates[0])
-    console.log(e.features[0].geometry.coordinates[1])
 const hatchLat = e.features[0].geometry.coordinates[1]
 const hatchLon = e.features[0].geometry.coordinates[0]
-
-// let response = fetch("https://openweathermap.org/data/2.5/onecall?lat="+ hatchLat +"&lon="+ hatchLon +"&exclude=hourly,daily&appid=c6e7120c57d9cf83d3bdb078b1beb1f1")
-    $.getJSON("https://api.openweathermap.org/data/2.5/onecall?lat="+ hatchLat +"&lon="+ hatchLon +"&exclude=hourly,minutely&appid=c6e7120c57d9cf83d3bdb078b1beb1f1",  // url
+$.getJSON("https://api.openweathermap.org/data/2.5/onecall?lat="+ hatchLat +"&lon="+ hatchLon +"&exclude=hourly,minutely&appid=c6e7120c57d9cf83d3bdb078b1beb1f1",  // url
                 function(data){
-                console.log(data)
-                });
+                document.getElementById('weather').innerHTML = "";
+                document.getElementById('weather').style.display='block';
+                var categories = data.daily
+                var n = 5
+                for (i=0; i<n; i++){
 
+                  icon = categories[i].weather[0].icon
+                  var img = document.createElement("img");
+                  img.src = "http://openweathermap.org/img/wn/" +icon+ "@2x.png";
+                  var src = document.getElementById("weather");
+                  src.appendChild(img);
+
+
+
+                  var max = categories[i].temp.max
+                  var min = categories[i].temp.min
+                  if (categories[i].rain == undefined){
+                    var precip = 0
+                  }
+                  else{
+                    var precip = categories[i].rain
+                  }
+                  // var tboth = document.createTextNode("Hi: " + max + "Lo: "+ min)
+                  // src.appendChild(tboth)
+                  var p = document.createElement("p");
+                  p.classList.add('temp')
+                  p.textContent = "Hi: " + max + " Lo: " + min + " Precip: " + precip;
+                  src.appendChild(p)
+                }
+
+
+                });
+////////////////////////////////////////////////////////////////
   });
