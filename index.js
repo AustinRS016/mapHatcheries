@@ -8,6 +8,45 @@ var map = new mapboxgl.Map({
   center: [-121.6, 48], // starting position as [lng, lat]
   zoom: 8, // starting zoom
 });
+
+var now = new Date();
+var start = new Date(now.getFullYear(), 0, 0);
+var diff = now - start;
+var oneDay = 1000 * 60 * 60 * 24;
+var day = (Math.floor(diff / oneDay) -1);
+console.log(day);
+
+
+$.getJSON('jsons/hatcheries.geojson', function (json) {
+});
+
+$.getJSON('jsons/salmonKDE.json', callback);
+
+
+function callback(g){
+  obj = { };
+  for (key in g){
+    myobj = { };
+    myobj['Facility Name'] = key
+    obj[0] = myobj
+      console.log(key)
+    for (x in g[key]){
+      // myobj['Species'] = x
+        console.log(x)
+        // myobj['dayValue'] = g[key][x][day]
+        console.log(g[key][x][day])
+        const kde = {}
+
+
+    }
+  }
+console.log(myobj)
+}
+
+
+
+
+
 map.on('load', function(){
 
 
@@ -15,16 +54,17 @@ map.addSource('hatch',{
        "type": "geojson",
        "data": "jsons/hatcheries.geojson"
    });
-  map.addLayer({
+
+map.addLayer({
      "id":"hatch",
      "type":"circle",
      "source":"hatch",
      "layout": {'visibility': 'visible'},
-     "paint": {
-      // 'line-color': '',
-    },
+     "paint": {    },
    });
-    });
+
+ });
+
 
 ///////////////////////////////////////////////////////////////////
 /////  Function to query data visualizations
@@ -32,6 +72,8 @@ map.addSource('hatch',{
    console.log(e.features[0].properties['Facility'])
 //////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////
+/////  Text Wrap Function
 function wrap(text, width) {
     text.each(function () {
         var text = d3.select(this),
@@ -105,18 +147,21 @@ d3.csv("https://raw.githubusercontent.com/AustinRS016/capstoneDataRepo/main/dens
 
           // Add X axis
           var x = d3.scaleLinear()
-            .domain([0, 366])
+            .domain([0, 365])
             .range([ 0, width]);
           let xAxisGenerator = d3.axisBottom(x);
           let tickLabels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
           xAxisGenerator.tickValues([0,31,59,90,120,151,181,212,243,273,304,334]);
-          xAxisGenerator.ticks(11);
+
           xAxisGenerator.tickFormat((d,i) => tickLabels[i]);
           xAxisGenerator.tickSize(-height)
 
+
+
           svg.append("g")
             .attr("transform", "translate(0," + height + ")")
-            .call(xAxisGenerator);
+            .call(xAxisGenerator)
+            .select(".domain").remove();
 
           // Create a Y scale for densities
           var y = d3.scaleLinear()
@@ -133,7 +178,7 @@ d3.csv("https://raw.githubusercontent.com/AustinRS016/capstoneDataRepo/main/dens
 
 
           // Compute kernel density estimation for each column:
-          var kde = kernelDensityEstimator(kernelEpanechnikov(7), x.ticks(40)) // increase this 40 for more accurate density.
+          var kde = kernelDensityEstimator(kernelEpanechnikov(7), x.ticks(80)) // increase this 40 for more accurate density.
           var allDensity = []
           for (i = 0; i < n; i++) {
               key = categories[i]
@@ -161,7 +206,6 @@ d3.csv("https://raw.githubusercontent.com/AustinRS016/capstoneDataRepo/main/dens
                   .y0(y(0))
               )
         });
-
         // This is what I need to compute kernel density estimation
         function kernelDensityEstimator(kernel, X) {
           return function(V) {
@@ -175,9 +219,10 @@ d3.csv("https://raw.githubusercontent.com/AustinRS016/capstoneDataRepo/main/dens
             return Math.abs(v /= k) <= 1 ? 0.75 * (1 - v * v) / k : 0;
           };
         }
-
 document.getElementById('my_dataviz').innerHTML = "";
+// document.getElementById('histBox').innerHTML = "";
 document.getElementById('my_dataviz').style.display='block';
+document.getElementById('histBox').style.display='block'
 ////////////////////////////////////////////////////////////////
 
 
@@ -188,7 +233,7 @@ d3.csv("https://raw.githubusercontent.com/AustinRS016/capstoneDataRepo/main/line
 
 
 // set the dimensions and margins of the graph
-var margin = {top: 150, right: 250, bottom: 80, left: 50},
+var margin = {top: 20, right: 250, bottom: 80, left: 50},
     width = 800 - margin.left - margin.right,
     height = 800 - margin.top - margin.bottom;
 
@@ -234,7 +279,7 @@ var svg = d3.select("#lineChart")
   var res = sumstat.map(function(d){ return d.key }) // list of group names
   var color = d3.scaleOrdinal()
     .domain(res)
-    .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999'])
+    .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#9c863a','#a65628','#f781bf','#999999'])
 
   // Draw the line
   svg.selectAll(".line")
@@ -255,52 +300,7 @@ var svg = d3.select("#lineChart")
 
 ///////////////////////////////////////////////////////////////////////////////
 ///Hover on line
-function hover(svg, path) {
 
-  if ("ontouchstart" in document) svg
-      .style("-webkit-tap-highlight-color", "transparent")
-      .on("touchmove", moved)
-      .on("touchstart", entered)
-      .on("touchend", left)
-  else svg
-      .on("mousemove", moved)
-      .on("mouseenter", entered)
-      .on("mouseleave", left);
-
-  const dot = svg.append("g")
-      .attr("display", "none");
-
-  dot.append("circle")
-      .attr("r", 2.5);
-
-  dot.append("text")
-      .attr("font-family", "sans-serif")
-      .attr("font-size", 10)
-      .attr("text-anchor", "middle")
-      .attr("y", -8);
-
-  function moved(event) {
-          event.preventDefault();
-          const pointer = d3.pointer(event, this);
-          const xm = x.invert(pointer[0]);
-          const ym = y.invert(pointer[1]);
-          const i = d3.bisectCenter(data.Year, xm);
-          const s = d3.least(data.series, d => Math.abs(d.values[i] - ym));
-          path.attr("stroke", d => d === s ? null : "#ddd").filter(d => d === s).raise();
-          dot.attr("transform", `translate(${x(data.dates[i])},${y(s.values[i])})`);
-          dot.select("text").text(s.Run);
-        }
-
-  function entered() {
-          path.style("mix-blend-mode", null).attr("stroke", "#ddd");
-          dot.attr("display", null);
-        }
-
-  function left() {
-          path.style("mix-blend-mode", "multiply").attr("stroke", null);
-          dot.attr("display", "none");
-          }
-        }
 
 
 
@@ -335,6 +335,7 @@ function hover(svg, path) {
 
 document.getElementById('lineChart').innerHTML = "";
 document.getElementById('lineChart').style.display='block';
+document.getElementById('lineBox').style.display='block'
 ////////////////////////////////////////////////////////////////
 
 
@@ -358,6 +359,7 @@ document.getElementById('lineChart').style.display='block';
 ///Weather Forecast
 const hatchLat = e.features[0].geometry.coordinates[1]
 const hatchLon = e.features[0].geometry.coordinates[0]
+
 $.getJSON("https://api.openweathermap.org/data/2.5/onecall?lat="+ hatchLat +"&lon="+ hatchLon +"&exclude=hourly,minutely&units=imperial&appid=c6e7120c57d9cf83d3bdb078b1beb1f1",  // url
                 function(data){
                 document.getElementById('weather').innerHTML = "";

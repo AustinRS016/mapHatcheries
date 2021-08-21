@@ -14,6 +14,12 @@ h1 {
   font-size: 6em;
   text-align: center;
 }
+h2 {
+  font-family: sans-serif;
+  font-size: 1.5em;
+  text-align: center;
+  font-style: italic;
+}
 #mapCont{
   justify-content: center;
   width: 90%;
@@ -25,6 +31,7 @@ h1 {
   height: 90%;
   width: 100%;
 }
+
 #facilityName{
   text-align: center;
   font-size: 5em;
@@ -37,6 +44,7 @@ h1 {
   font-size: .5em;
   position: relative;
 }
+
 .charts{
   margin:auto;
   width: 1800px;
@@ -46,14 +54,12 @@ h1 {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-
 }
+
 #graph{
-
-
   margin: auto;
-
 }
+
 #weather{
   display: flex;
   flex-direction: row;
@@ -63,6 +69,11 @@ h1 {
 }
 #lineChart{
   padding: 50px 50px 50px 50px
+}
+.chartTitles{
+  text-align: center;
+  font-size: 2em;
+  font-family: sans-serif;
 }
 .temp{
   max-width: 200px;
@@ -82,4 +93,9 @@ h1 {
   list-style-type: none;
   padding: 0px;
   margin: auto;
+}
+.hatchery-summer-chinook{
+  stroke: green;
+  fill: green;
+
 }
