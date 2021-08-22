@@ -5,8 +5,8 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiYXVzdGlucnMxNiIsImEiOiJja2hjcTRidmgwOWdpMnNxc
 var map = new mapboxgl.Map({
   container: 'map', // HTML container id
   style: 'mapbox://styles/austinrs16/ckoqf7lh646z517msf4mttqe9', // style URL
-  center: [-121.6, 48], // starting position as [lng, lat]
-  zoom: 8, // starting zoom
+  center: [-121.2, 47.5], // starting position as [lng, lat]
+  zoom: 7.3, // starting zoom
 });
 
 var now = new Date();
@@ -14,34 +14,8 @@ var start = new Date(now.getFullYear(), 0, 0);
 var diff = now - start;
 var oneDay = 1000 * 60 * 60 * 24;
 var day = (Math.floor(diff / oneDay) -1);
-console.log(day);
-
-
-$.getJSON('jsons/hatcheries.geojson', function (json) {
-});
-
-$.getJSON('jsons/salmonKDE.json', callback);
-
-
-function callback(g){
-  obj = { };
-  for (key in g){
-    myobj = { };
-    myobj['Facility Name'] = key
-    obj[0] = myobj
-      console.log(key)
-    for (x in g[key]){
-      // myobj['Species'] = x
-        console.log(x)
-        // myobj['dayValue'] = g[key][x][day]
-        console.log(g[key][x][day])
-        const kde = {}
-
-
-    }
-  }
-console.log(myobj)
-}
+var day = String(day)
+console.log(day)
 
 
 
@@ -55,15 +29,127 @@ map.addSource('hatch',{
        "data": "jsons/hatcheries.geojson"
    });
 
+map.addSource('KDE', {
+  'type': 'geojson',
+  'data': 'jsons/geoSalKDE.geojson'
+});
+
+map.addLayer({
+  'id':'sockeye',
+  'type':'circle',
+  'source':'KDE',
+  'layout':{'visibility':'none'},
+  'paint': {
+    'circle-color': 'red',
+    'circle-radius': 10
+      },
+  "filter":['all',
+    ['==', 'Species','Sockeye' ],
+    ['!=', day, '0.0']]
+});
+map.addLayer({
+  'id':'pink',
+  'type':'circle',
+  'source':'KDE',
+  'layout':{'visibility':'none'},
+  'paint': {
+    'circle-color': 'pink',
+    'circle-radius': 10
+      },
+  "filter":['all',
+    ['==', 'Species','Pink' ],
+    ['!=', day, '0.0']]
+});
+map.addLayer({
+  'id':'steelhead',
+  'type':'circle',
+  'source':'KDE',
+  'layout':{'visibility':'none'},
+  'paint': {
+    'circle-color': 'orange',
+    'circle-radius': 10
+      },
+  "filter":['all',
+    ['==', 'Species','Steelhead' ],
+    ['!=', day, '0.0']]
+});
+map.addLayer({
+  'id':'chum',
+  'type':'circle',
+  'source':'KDE',
+  'layout':{'visibility':'none'},
+  'paint': {
+    'circle-color': 'green',
+    'circle-radius': 10
+      },
+  "filter":['all',
+    ['==', 'Species','Chum' ],
+    ['!=', day, '0.0']]
+});
+map.addLayer({
+  'id':'chinook',
+  'type':'circle',
+  'source':'KDE',
+  'layout':{'visibility':'none'},
+  'paint': {
+    'circle-color': 'yellow',
+    'circle-radius': 10
+      },
+  "filter":['all',
+    ['==', 'Species','Chinook' ],
+    ['!=', day, '0.0']]
+});
+map.addLayer({
+  'id':'coho',
+  'type':'circle',
+  'source':'KDE',
+  'layout':{'visibility':'none'},
+  'paint': {
+    'circle-color': 'blue',
+    'circle-radius': 10
+      },
+  "filter":['all',
+    ['==', 'Species','Coho' ],
+    ['!=', day, '0.0']]
+});
+
 map.addLayer({
      "id":"hatch",
      "type":"circle",
      "source":"hatch",
      "layout": {'visibility': 'visible'},
-     "paint": {    },
+     "paint": {
+          },
    });
-
  });
+
+map.on('idle', () => {
+const toggLayers = ['pink','chum','steelhead','coho','chinook','sockeye'];
+
+for (const id of toggLayers) {
+  if (document.getElementById(id)) {continue;}
+
+const link = document.createElement('a');
+link.id = id;
+link.href = '#';
+link.textContent = id;
+link.className = 'active';
+
+link.onclick = function(e) {
+  const clickedLayer = this.textContent;
+  e.preventDefault();
+  e.stopPropagation();
+
+  const visibility = map.getLayoutProperty(clickedLayer,'visibility');
+
+  if (visibility === 'visible') {map.setLayoutProperty(clickedLayer, 'visibility', 'none'); this.className = '';}
+  else {this.className = 'active'; map.setLayoutProperty(clickedLayer,'visibility','visible');}
+
+};
+  const layers = document.getElementById('menu');
+  layers.appendChild(link);
+}
+});
 
 
 ///////////////////////////////////////////////////////////////////
@@ -409,7 +495,7 @@ $.getJSON("https://api.openweathermap.org/data/2.5/onecall?lat="+ hatchLat +"&lo
                       ul.appendChild(lmin)
 
                   var lprecip = document.createElement("LI")
-                  var pNode = document.createTextNode("Precip: " + precip)
+                  var pNode = document.createTextNode("Precip: " + precip+"mm")
                       lprecip.appendChild(pNode)
                       ul.appendChild(lprecip)
 
@@ -422,6 +508,7 @@ $.getJSON("https://api.openweathermap.org/data/2.5/onecall?lat="+ hatchLat +"&lo
 document.getElementById('facilityName').innerHTML = "";
 document.getElementById('facilityName').style.display='block';
 var text = document.createTextNode(e.features[0].properties['Facility Name'])
+console.log(text)
 document.getElementById('facilityName').appendChild(text)
 
 
