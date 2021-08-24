@@ -199,6 +199,7 @@ d3.csv("https://raw.githubusercontent.com/AustinRS016/capstoneDataRepo/main/dens
           // set the dimensions and margins of the graph
           var margin = {top: 60, right: 20, bottom: 20, left:150},
               width = 800 - margin.left - margin.right;
+              console.log(data.columns.length)
 
 
 
@@ -315,113 +316,181 @@ document.getElementById('histBox').style.display='block'
 
 ////////////////////////////////////////////////////////////////
 ///// Line Chart
-d3.csv("https://raw.githubusercontent.com/AustinRS016/capstoneDataRepo/main/lineChartData/" + e.features[0].properties['Facility'] + ".csv", function(data) {
+
+d3.csv("https://raw.githubusercontent.com/AustinRS016/capstoneDataRepo/main/lineChartData/" + e.features[0].properties['Facility'] + ".csv", function(data){
 
 
-// set the dimensions and margins of the graph
-var margin = {top: 20, right: 250, bottom: 80, left: 50},
-    width = 800 - margin.left - margin.right,
-    height = 800 - margin.top - margin.bottom;
-
-// append the svg object to the body of the page
-var svg = d3.select("#lineChart")
-  .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
+// group the data: I want to draw one line per group
+var dataset = d3.nest() // nest function allows to group the calculation per level of a factor
+  .key(function(d) { return d.Run; })
+  .entries(data);
+var labels = (d3.groups(dataset, d=> d.key))
+  .map(function(arr){ return arr[0];})
+var xAxis = d3.groups(data, d => d.Year)
+  .map(function(arr){return arr[0];})
 
 
-  // group the data: I want to draw one line per group
-  var sumstat = d3.nest() // nest function allows to group the calculation per level of a factor
-    .key(function(d) { return d.Run; })
-    .entries(data);
-  var keys = (d3.groups(sumstat, d=> d.key))
-    .map(function(arr){ return arr[0];})
+Chart.defaults.font.size = 16;
+
+  var fishLabels = data.map(function(d) {return d.Run})
+  let chart = new Chart('chart', {
+    responise: true,
+     type: 'line',
+     data: {
+       labels: xAxis,
+       datasets: []
+     },
+     options: {
+       plugins: {
+         title: {
+           display: true,
+           text: 'Yearly Salmon/Steelhead Returns',
+           padding: {top: 10,bottom: 3},
+           font: {size: 34},
+         },
+         subtitle: {
+           display: true,
+           text: 'Click a legend item to hide/show it. Hover over a line to get the raw count.',
+           font: {style: 'italic'},
+           padding:{bottom: 7}
+         }
+       }
+     }
+
+   });
+
+colors = ['#900C3F','#C70039','#FF5733','#FFC300','#3B6013','#156013','#136038','#13605E','#133B60','#131460','#2C8AC9','#C9AC2C','#98C92C','#FF6FFA','#FF6FB2','#FF746F','#FFBC6F']
+
+ for (var i = 0; i < labels.length; i++) {
+    var l = (dataset[i].key)
+    var d = d3.map(dataset[i].values, d => d.Count)
+    chart.data.datasets.push({
+     label: l,
+     data: d,
+     fill: false,
+     borderColor: colors[i]
+    })
+   };
+   chart.update();
+
+ })
 
 
-  // Add X axis --> it is a date format
-  var x = d3.scaleLinear()
-    .domain(d3.extent(data, function(d) { return d.Year; }))
-    .range([ 0, width ]);
-  svg.append("g")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(x).ticks(5));
-
-  // Add Y axis
-  var y = d3.scaleSqrt()
-    .domain([0, d3.max(data, function(d) { return +d.Count; })])
-    .range([ height, 0 ]);
+ // document.getElementById('chart').innerHTML = "";
+ // document.getElementById('chart').style.display='block';
+ document.querySelector('#chart-box').innerHTML = '<canvas id="chart" width="600" height="350"></canvas>';
+ // document.getElementById('chart-box').style.display='block';
 
 
-        console.log(d3.max(data, function(d) { return +d.Count; }))
-
-
-  svg.append("g")
-    .call(d3.axisLeft(y));
-
-  // color palette
-  var res = sumstat.map(function(d){ return d.key }) // list of group names
-  var color = d3.scaleOrdinal()
-    .domain(res)
-    .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#9c863a','#a65628','#f781bf','#999999'])
-
-  // Draw the line
-  svg.selectAll(".line")
-      .data(sumstat)
-      .enter()
-      .append("path")
-        .attr("class", "myLine")
-        .attr("fill", "none")
-        .attr("stroke", function(d){ return color(d.key) })
-        .attr("stroke-width", 1.5)
-        .attr("d", function(d){
-          return d3.line()
-            .x(function(d) { return x(d.Year); })
-            .y(function(d) { return y(+d.Count); })
-
-            (d.values)
-        })
-
-///////////////////////////////////////////////////////////////////////////////
-///Hover on line
-
-
-
-
-
-//////////////////////////////////////////////////
-////// Legend
-        var size = 12
-        svg.selectAll("myrect")
-          .data(keys)
-          .enter()
-          .append("rect")
-            .attr("x", 510)
-            .attr("y", function(d,i){ return 0 + i*(size+30)}) // 100 is where the first dot appears. 25 is the distance between dots
-            .attr("width", size)
-            .attr("height", size)
-            .style("fill", function(d){ return color(d)})
-        svg.selectAll("mylabels")
-           .data(keys)
-           .enter()
-           .append("text")
-             .attr("x", 510 + size*1.2)
-             .attr("y", function(d,i){ return 0 + i*(size+30) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
-             .style("fill", function(d){ return color(d)})
-             .text(function(d){ return d})
-             .attr("text-anchor", "left")
-             .style("alignment-baseline", "middle")
-             .call(wrap, 200)
-
-
-})
-
-
-document.getElementById('lineChart').innerHTML = "";
-document.getElementById('lineChart').style.display='block';
-document.getElementById('lineBox').style.display='block'
+// d3.csv("https://raw.githubusercontent.com/AustinRS016/capstoneDataRepo/main/lineChartData/" + e.features[0].properties['Facility'] + ".csv", function(data) {
+//
+// console.log(data)
+// // set the dimensions and margins of the graph
+// var margin = {top: 20, right: 250, bottom: 80, left: 50},
+//     width = 1600 - margin.left - margin.right,
+//     height = 800 - margin.top - margin.bottom;
+//
+// // append the svg object to the body of the page
+// var svg = d3.select("#lineChart")
+//   .append("svg")
+//     .attr("width", width + margin.left + margin.right)
+//     .attr("height", height + margin.top + margin.bottom)
+//   // .append("svg")
+//   // .attr('viewBox', '0 0 1600 800')
+//   .append("g")
+//     .attr("transform",
+//           "translate(" + margin.left + "," + margin.top + ")");
+//
+//
+//   // group the data: I want to draw one line per group
+//   var sumstat = d3.nest() // nest function allows to group the calculation per level of a factor
+//     .key(function(d) { return d.Run; })
+//     .entries(data);
+//   var keys = (d3.groups(sumstat, d=> d.key))
+//     .map(function(arr){ return arr[0];})
+//
+//
+//   // Add X axis --> it is a date format
+//   var x = d3.scaleLinear()
+//     .domain(d3.extent(data, function(d) { return d.Year; }))
+//     .range([ 0, width ]);
+//   svg.append("g")
+//     .attr("transform", "translate(0," + height + ")")
+//     .call(d3.axisBottom(x).ticks(5));
+//
+//   // Add Y axis
+//   var y = d3.scaleSqrt()
+//     .domain([0, d3.max(data, function(d) { return +d.Count; })])
+//     .range([ height, 0 ]);
+//
+//
+//         console.log(d3.max(data, function(d) { return +d.Count; }))
+//
+//
+//   svg.append("g")
+//     .call(d3.axisLeft(y));
+//
+//   // color palette
+//   var res = sumstat.map(function(d){ return d.key }) // list of group names
+//   var color = d3.scaleOrdinal()
+//     .domain(res)
+//     .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#9c863a','#a65628','#f781bf','#999999'])
+//
+//   // Draw the line
+//   svg.selectAll(".line")
+//       .data(sumstat)
+//       .enter()
+//       .append("path")
+//         .attr("class", "myLine")
+//         .attr("fill", "none")
+//         .attr("stroke", function(d){ return color(d.key) })
+//         .attr("stroke-width", 1.5)
+//         .attr("d", function(d){
+//           return d3.line()
+//             .x(function(d) { return x(d.Year); })
+//             .y(function(d) { return y(+d.Count); })
+//
+//             (d.values)
+//         })
+//
+// ///////////////////////////////////////////////////////////////////////////////
+// ///Hover on line
+//
+//
+//
+//
+//
+// //////////////////////////////////////////////////
+// ////// Legend
+//         var size = 12
+//         svg.selectAll("myrect")
+//           .data(keys)
+//           .enter()
+//           .append("rect")
+//             .attr("x", 1320)
+//             .attr("y", function(d,i){ return 0 + i*(size+30)}) // 100 is where the first dot appears. 25 is the distance between dots
+//             .attr("width", size)
+//             .attr("height", size)
+//             .style("fill", function(d){ return color(d)})
+//         svg.selectAll("mylabels")
+//            .data(keys)
+//            .enter()
+//            .append("text")
+//              .attr("x", 1320 + size*1.2)
+//              .attr("y", function(d,i){ return 0 + i*(size+30) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+//              .style("fill", function(d){ return color(d)})
+//              .text(function(d){ return d})
+//              .attr("text-anchor", "left")
+//              .style("alignment-baseline", "middle")
+//              .call(wrap, 200)
+//
+//
+// })
+//
+//
+// document.getElementById('lineChart').innerHTML = "";
+// document.getElementById('lineChart').style.display='block';
+// document.getElementById('lineBox').style.display='block'
 ////////////////////////////////////////////////////////////////
 
 
@@ -430,7 +499,6 @@ document.getElementById('lineBox').style.display='block'
   cacheDtTm = new Date().getTime();
   parm = '00060'
   hydrograph_url = "http://waterdata.usgs.gov/nwisweb/graph?agency_cd=USGS&site_no="  + e.features[0].properties.river_gauge + "&parm_cd=00060&period=7&cacheTime=" + cacheDtTm;
-                    // http://waterdata.usgs.gov/nwisweb/graph?agency_cd=USGS&site_no=01646500&parm_cd=00060&period=7&cacheTime=1628470410259
   hydrograph = '<a><img src="'+hydrograph_url+'" id="riverChart" height="500" width="600"/></a>';
   console.log(e.features[0].properties.river_gauge)
   if (e.features[0].properties.river_gauge == ""){

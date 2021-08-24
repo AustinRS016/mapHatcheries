@@ -3,6 +3,7 @@
 	<head>
 		<!-- Link to JQuery library-->
 		 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
 		<!-- insert Mapbox GL library links here -->
 			<script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
@@ -15,6 +16,8 @@
 			<script src="https://d3js.org/d3.v4.js"></script>
 			<script src="https://d3js.org/d3-array.v2.min.js"></script>
 
+			<!-- Chart js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js" integrity="sha512-Wt1bJGtlnMtGP0dqNFH1xlkLBNpEodaiQ8ZN5JLA5wpc1sUlk/O5uuOMNgvzddzkpvZ9GLyYNa8w2s7rqiTk5Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	</head>
 
 	<body>
@@ -42,15 +45,20 @@
 		<article id="my_dataviz" style= 'display:none;'></article>
 	</div>
 
-	<div id="lineBox" style= 'display:none;'><h3 class='chartTitles'>Number of Returns Per Year</h3>
+	<!-- <div id="lineBox" style= 'display:none;'><h3 class='chartTitles'>Number of Returns Per Year</h3>
 		<article id="lineChart" style='display:none;'></article>
+	</div> -->
+
+	<div id='chart-box'class="chart-container" style="postion: relative; margin:auto; height: 40vh; width: 80vw;">
+		<!-- <canvas id="chart" width="600" height="350" style='display:none;'></canvas> -->
+		<canvas id="chart" width="600" height="350"></canvas>
 	</div>
+
 </section>
 
 
 
 <script src = 'index.js'></script>
-<script src = 'twoDHisto.js'></script>
-
+<!-- <script src = 'graph.js'></script> -->
 	</body>
 </html>
