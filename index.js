@@ -15,7 +15,6 @@ var diff = now - start;
 var oneDay = 1000 * 60 * 60 * 24;
 var day = (Math.floor(diff / oneDay) -1);
 var day = String(day)
-console.log(day)
 
 
 
@@ -34,6 +33,7 @@ map.addSource('KDE', {
   'data': 'jsons/geoSalKDE.geojson'
 });
 
+//Fish Layers
 map.addLayer({
   'id':'sockeye',
   'type':'circle',
@@ -113,8 +113,22 @@ map.addLayer({
     ['!=', day, '0.0']]
 });
 
+//////////Hatchery Layers
+//Clickable
 map.addLayer({
      "id":"hatch",
+     "type":"circle",
+     "source":"hatch",
+     "layout": {'visibility': 'visible'},
+     "paint": {
+       "circle-radius":15,
+       "circle-color": "blue",
+       "circle-opacity": 0
+          },
+   });
+//Visible
+map.addLayer({
+     "id":"hatch_vis",
      "type":"circle",
      "source":"hatch",
      "layout": {'visibility': 'visible'},
@@ -122,7 +136,16 @@ map.addLayer({
           },
    });
  });
+///////////////////////////////////////////////////////////////////
 
+map.on('mouseenter', 'hatch', () => {
+  map.getCanvas().style.cursor = 'pointer'
+})
+map.on('mouseleave', 'hatch', () => {
+  map.getCanvas().style.cursor = ''
+})
+
+//////////////////////////////////////////////////////////////////
 map.on('idle', () => {
 const toggLayers = ['pink','chum','steelhead','coho','chinook','sockeye'];
 
@@ -155,7 +178,6 @@ link.onclick = function(e) {
 ///////////////////////////////////////////////////////////////////
 /////  Function to query data visualizations
  map.on('click', 'hatch', function (e) {
-   console.log(e.features[0].properties['Facility'])
 //////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////
@@ -199,7 +221,6 @@ d3.csv("https://raw.githubusercontent.com/AustinRS016/capstoneDataRepo/main/dens
           // set the dimensions and margins of the graph
           var margin = {top: 60, right: 20, bottom: 20, left:150},
               width = 800 - margin.left - margin.right;
-              console.log(data.columns.length)
 
 
 
@@ -219,7 +240,6 @@ d3.csv("https://raw.githubusercontent.com/AustinRS016/capstoneDataRepo/main/dens
           else{
             var yDom = .05
           }
-          console.log(n)
 
 
 
@@ -375,122 +395,8 @@ colors = ['#900C3F','#C70039','#FF5733','#FFC300','#3B6013','#156013','#136038',
 
  })
 
-
- // document.getElementById('chart').innerHTML = "";
- // document.getElementById('chart').style.display='block';
  document.querySelector('#chart-box').innerHTML = '<canvas id="chart" width="600" height="350"></canvas>';
- // document.getElementById('chart-box').style.display='block';
 
-
-// d3.csv("https://raw.githubusercontent.com/AustinRS016/capstoneDataRepo/main/lineChartData/" + e.features[0].properties['Facility'] + ".csv", function(data) {
-//
-// console.log(data)
-// // set the dimensions and margins of the graph
-// var margin = {top: 20, right: 250, bottom: 80, left: 50},
-//     width = 1600 - margin.left - margin.right,
-//     height = 800 - margin.top - margin.bottom;
-//
-// // append the svg object to the body of the page
-// var svg = d3.select("#lineChart")
-//   .append("svg")
-//     .attr("width", width + margin.left + margin.right)
-//     .attr("height", height + margin.top + margin.bottom)
-//   // .append("svg")
-//   // .attr('viewBox', '0 0 1600 800')
-//   .append("g")
-//     .attr("transform",
-//           "translate(" + margin.left + "," + margin.top + ")");
-//
-//
-//   // group the data: I want to draw one line per group
-//   var sumstat = d3.nest() // nest function allows to group the calculation per level of a factor
-//     .key(function(d) { return d.Run; })
-//     .entries(data);
-//   var keys = (d3.groups(sumstat, d=> d.key))
-//     .map(function(arr){ return arr[0];})
-//
-//
-//   // Add X axis --> it is a date format
-//   var x = d3.scaleLinear()
-//     .domain(d3.extent(data, function(d) { return d.Year; }))
-//     .range([ 0, width ]);
-//   svg.append("g")
-//     .attr("transform", "translate(0," + height + ")")
-//     .call(d3.axisBottom(x).ticks(5));
-//
-//   // Add Y axis
-//   var y = d3.scaleSqrt()
-//     .domain([0, d3.max(data, function(d) { return +d.Count; })])
-//     .range([ height, 0 ]);
-//
-//
-//         console.log(d3.max(data, function(d) { return +d.Count; }))
-//
-//
-//   svg.append("g")
-//     .call(d3.axisLeft(y));
-//
-//   // color palette
-//   var res = sumstat.map(function(d){ return d.key }) // list of group names
-//   var color = d3.scaleOrdinal()
-//     .domain(res)
-//     .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#9c863a','#a65628','#f781bf','#999999'])
-//
-//   // Draw the line
-//   svg.selectAll(".line")
-//       .data(sumstat)
-//       .enter()
-//       .append("path")
-//         .attr("class", "myLine")
-//         .attr("fill", "none")
-//         .attr("stroke", function(d){ return color(d.key) })
-//         .attr("stroke-width", 1.5)
-//         .attr("d", function(d){
-//           return d3.line()
-//             .x(function(d) { return x(d.Year); })
-//             .y(function(d) { return y(+d.Count); })
-//
-//             (d.values)
-//         })
-//
-// ///////////////////////////////////////////////////////////////////////////////
-// ///Hover on line
-//
-//
-//
-//
-//
-// //////////////////////////////////////////////////
-// ////// Legend
-//         var size = 12
-//         svg.selectAll("myrect")
-//           .data(keys)
-//           .enter()
-//           .append("rect")
-//             .attr("x", 1320)
-//             .attr("y", function(d,i){ return 0 + i*(size+30)}) // 100 is where the first dot appears. 25 is the distance between dots
-//             .attr("width", size)
-//             .attr("height", size)
-//             .style("fill", function(d){ return color(d)})
-//         svg.selectAll("mylabels")
-//            .data(keys)
-//            .enter()
-//            .append("text")
-//              .attr("x", 1320 + size*1.2)
-//              .attr("y", function(d,i){ return 0 + i*(size+30) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
-//              .style("fill", function(d){ return color(d)})
-//              .text(function(d){ return d})
-//              .attr("text-anchor", "left")
-//              .style("alignment-baseline", "middle")
-//              .call(wrap, 200)
-//
-//
-// })
-//
-//
-// document.getElementById('lineChart').innerHTML = "";
-// document.getElementById('lineChart').style.display='block';
-// document.getElementById('lineBox').style.display='block'
 ////////////////////////////////////////////////////////////////
 
 
@@ -500,7 +406,6 @@ colors = ['#900C3F','#C70039','#FF5733','#FFC300','#3B6013','#156013','#136038',
   parm = '00060'
   hydrograph_url = "http://waterdata.usgs.gov/nwisweb/graph?agency_cd=USGS&site_no="  + e.features[0].properties.river_gauge + "&parm_cd=00060&period=7&cacheTime=" + cacheDtTm;
   hydrograph = '<a><img src="'+hydrograph_url+'" id="riverChart" height="500" width="600"/></a>';
-  console.log(e.features[0].properties.river_gauge)
   if (e.features[0].properties.river_gauge == ""){
     document.getElementById('graph').innerHTML = "";
   }else{
@@ -576,7 +481,6 @@ $.getJSON("https://api.openweathermap.org/data/2.5/onecall?lat="+ hatchLat +"&lo
 document.getElementById('facilityName').innerHTML = "";
 document.getElementById('facilityName').style.display='block';
 var text = document.createTextNode(e.features[0].properties['Facility Name'])
-console.log(text)
 document.getElementById('facilityName').appendChild(text)
 
 
