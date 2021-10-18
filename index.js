@@ -9,133 +9,133 @@ var map = new mapboxgl.Map({
   zoom: 7.3, // starting zoom
 });
 
-var now = new Date();
-var start = new Date(now.getFullYear(), 0, 0);
-var diff = now - start;
-var oneDay = 1000 * 60 * 60 * 24;
-var day = (Math.floor(diff / oneDay) -1);
-var day = String(day)
+    var now = new Date();
+    var start = new Date(now.getFullYear(), 0, 0);
+    var diff = now - start;
+    var oneDay = 1000 * 60 * 60 * 24;
+    var day = (Math.floor(diff / oneDay) -1);
+    var day = String(day)
 
 
 
 
 
-map.on('load', function(){
+    map.on('load', function(){
 
 
-map.addSource('hatch',{
-       "type": "geojson",
-       "data": "jsons/hatcheries.geojson"
-   });
+    map.addSource('hatch',{
+           "type": "geojson",
+           "data": "jsons/hatcheries.geojson"
+       });
 
-map.addSource('KDE', {
-  'type': 'geojson',
-  'data': 'jsons/geoSalKDE.geojson'
-});
+    map.addSource('KDE', {
+      'type': 'geojson',
+      'data': 'jsons/geoSalKDE.geojson'
+    });
 
-//Fish Layers
-map.addLayer({
-  'id':'sockeye',
-  'type':'circle',
-  'source':'KDE',
-  'layout':{'visibility':'none'},
-  'paint': {
-    'circle-color': 'red',
-    'circle-radius': 10
-      },
-  "filter":['all',
-    ['==', 'Species','Sockeye' ],
-    ['!=', day, '0.0']]
-});
-map.addLayer({
-  'id':'pink',
-  'type':'circle',
-  'source':'KDE',
-  'layout':{'visibility':'none'},
-  'paint': {
-    'circle-color': 'pink',
-    'circle-radius': 10
-      },
-  "filter":['all',
-    ['==', 'Species','Pink' ],
-    ['!=', day, '0.0']]
-});
-map.addLayer({
-  'id':'steelhead',
-  'type':'circle',
-  'source':'KDE',
-  'layout':{'visibility':'none'},
-  'paint': {
-    'circle-color': 'orange',
-    'circle-radius': 10
-      },
-  "filter":['all',
-    ['==', 'Species','Steelhead' ],
-    ['!=', day, '0.0']]
-});
-map.addLayer({
-  'id':'chum',
-  'type':'circle',
-  'source':'KDE',
-  'layout':{'visibility':'none'},
-  'paint': {
-    'circle-color': 'green',
-    'circle-radius': 10
-      },
-  "filter":['all',
-    ['==', 'Species','Chum' ],
-    ['!=', day, '0.0']]
-});
-map.addLayer({
-  'id':'chinook',
-  'type':'circle',
-  'source':'KDE',
-  'layout':{'visibility':'none'},
-  'paint': {
-    'circle-color': 'yellow',
-    'circle-radius': 10
-      },
-  "filter":['all',
-    ['==', 'Species','Chinook' ],
-    ['!=', day, '0.0']]
-});
-map.addLayer({
-  'id':'coho',
-  'type':'circle',
-  'source':'KDE',
-  'layout':{'visibility':'none'},
-  'paint': {
-    'circle-color': 'blue',
-    'circle-radius': 10
-      },
-  "filter":['all',
-    ['==', 'Species','Coho' ],
-    ['!=', day, '0.0']]
-});
-
-//////////Hatchery Layers
-//Clickable
-map.addLayer({
-     "id":"hatch",
-     "type":"circle",
-     "source":"hatch",
-     "layout": {'visibility': 'visible'},
-     "paint": {
-       "circle-radius":15,
-       "circle-color": "blue",
-       "circle-opacity": 0
+    //Fish Layers
+    map.addLayer({
+      'id':'sockeye',
+      'type':'circle',
+      'source':'KDE',
+      'layout':{'visibility':'none'},
+      'paint': {
+        'circle-color': 'red',
+        'circle-radius': 10
           },
-   });
-//Visible
-map.addLayer({
-     "id":"hatch_vis",
-     "type":"circle",
-     "source":"hatch",
-     "layout": {'visibility': 'visible'},
-     "paint": {
+      "filter":['all',
+        ['==', 'Species','Sockeye' ],
+        ['!=', day, '0.0']]
+    });
+    map.addLayer({
+      'id':'pink',
+      'type':'circle',
+      'source':'KDE',
+      'layout':{'visibility':'none'},
+      'paint': {
+        'circle-color': 'pink',
+        'circle-radius': 10
           },
-   });
- });
+      "filter":['all',
+        ['==', 'Species','Pink' ],
+        ['!=', day, '0.0']]
+    });
+    map.addLayer({
+      'id':'steelhead',
+      'type':'circle',
+      'source':'KDE',
+      'layout':{'visibility':'none'},
+      'paint': {
+        'circle-color': 'orange',
+        'circle-radius': 10
+          },
+      "filter":['all',
+        ['==', 'Species','Steelhead' ],
+        ['!=', day, '0.0']]
+    });
+    map.addLayer({
+      'id':'chum',
+      'type':'circle',
+      'source':'KDE',
+      'layout':{'visibility':'none'},
+      'paint': {
+        'circle-color': 'green',
+        'circle-radius': 10
+          },
+      "filter":['all',
+        ['==', 'Species','Chum' ],
+        ['!=', day, '0.0']]
+    });
+    map.addLayer({
+      'id':'chinook',
+      'type':'circle',
+      'source':'KDE',
+      'layout':{'visibility':'none'},
+      'paint': {
+        'circle-color': 'yellow',
+        'circle-radius': 10
+          },
+      "filter":['all',
+        ['==', 'Species','Chinook' ],
+        ['!=', day, '0.0']]
+    });
+    map.addLayer({
+      'id':'coho',
+      'type':'circle',
+      'source':'KDE',
+      'layout':{'visibility':'none'},
+      'paint': {
+        'circle-color': 'blue',
+        'circle-radius': 10
+          },
+      "filter":['all',
+        ['==', 'Species','Coho' ],
+        ['!=', day, '0.0']]
+    });
+
+    //////////Hatchery Layers
+    //Clickable
+    map.addLayer({
+         "id":"hatch",
+         "type":"circle",
+         "source":"hatch",
+         "layout": {'visibility': 'visible'},
+         "paint": {
+           "circle-radius":15,
+           "circle-color": "blue",
+           "circle-opacity": 0
+              },
+       });
+    //Visible
+    map.addLayer({
+         "id":"hatch_vis",
+         "type":"circle",
+         "source":"hatch",
+         "layout": {'visibility': 'visible'},
+         "paint": {
+              },
+       });
+     });
 ///////////////////////////////////////////////////////////////////
 
 map.on('mouseenter', 'hatch', () => {
@@ -339,16 +339,18 @@ document.getElementById('histBox').style.display='block'
 
 d3.csv("https://raw.githubusercontent.com/AustinRS016/capstoneDataRepo/main/lineChartData/" + e.features[0].properties['Facility'] + ".csv", function(data){
 
-
+console.log(data)
 // group the data: I want to draw one line per group
 var dataset = d3.nest() // nest function allows to group the calculation per level of a factor
   .key(function(d) { return d.Run; })
   .entries(data);
+  console.log(dataset)
 var labels = (d3.groups(dataset, d=> d.key))
   .map(function(arr){ return arr[0];})
+  console.log(labels)
 var xAxis = d3.groups(data, d => d.Year)
   .map(function(arr){return arr[0];})
-
+  console.log(xAxis)
 
 Chart.defaults.font.size = 16;
 

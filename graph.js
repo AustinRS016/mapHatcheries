@@ -79,5 +79,4 @@ $("#toggle".click(function() {
   });
   chart.update();
 }))
-
  })
